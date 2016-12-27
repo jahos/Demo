@@ -31,6 +31,7 @@ SOFTWARE.
 #include <stdio.h>
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
+#include "Core/USART/USART.h"
 
 
 
@@ -50,6 +51,7 @@ SOFTWARE.
 int main(void)
 {
   int i = 0;
+  USART usr;
   /* Infinite loop */
   while (1)
   {

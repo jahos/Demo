@@ -142,6 +142,17 @@ void SysTick_Handler(void)
 {
 }
 
+void USART1_IRQHandler()
+{
+	uint16_t tmpChar = 0;
+    if (USART_GetITStatus(USART1, USART_IT_RXNE)) {
+    	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+    	tmpChar = USART_ReceiveData(USART1);
+    	USART_SendData(USART1,tmpChar);
+    	GPIO_SetBits(GPIOC,GPIO_Pin_9);
+    }
+}
+
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
