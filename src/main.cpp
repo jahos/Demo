@@ -84,7 +84,7 @@ int main(void)
       /* Toggle LED4 */
         STM32vldiscovery_LEDToggle(LED4);
       /* Turn Off LED3 */
-      STM32vldiscovery_LEDOff(LED3);
+      //STM32vldiscovery_LEDOff(LED3);
     }
   }
 }
