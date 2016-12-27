@@ -36,7 +36,6 @@ SOFTWARE.
 
 /* Private macro */
 /* Private variables */
- USART_InitTypeDef USART_InitStructure;
 
 /* Private function prototypes */
 /* Private functions */
@@ -51,64 +50,12 @@ SOFTWARE.
 int main(void)
 {
   int i = 0;
-
-  /**
-  *  IMPORTANT NOTE!
-  *  The symbol VECT_TAB_SRAM needs to be defined when building the project
-  *  if code has been located to RAM and interrupts are used. 
-  *  Otherwise the interrupt table located in flash will be used.
-  *  See also the <system_*.c> file and how the SystemInit() function updates 
-  *  SCB->VTOR register.  
-  *  E.g.  SCB->VTOR = 0x20000000;  
-  */
-
-  STM32vldiscovery_LEDInit(LED3);
-  STM32vldiscovery_LEDInit(LED4);
-  STM32vldiscovery_PBInit(BUTTON_USER, BUTTON_MODE_GPIO);
-  STM32vldiscovery_LEDOff(LED3);
-  STM32vldiscovery_LEDOff(LED4);
-
   /* Infinite loop */
   while (1)
   {
-	i++;
-    if(0 == STM32vldiscovery_PBGetState(BUTTON_USER))
-    {
-      /* Toggle LED3 */
-      STM32vldiscovery_LEDToggle(LED3);
-      /* Turn Off LED4 */
-      STM32vldiscovery_LEDOff(LED4);
-    }
-    else
-    {
-      /* Toggle LED4 */
-        STM32vldiscovery_LEDToggle(LED4);
-      /* Turn Off LED3 */
-      //STM32vldiscovery_LEDOff(LED3);
-    }
+
   }
 }
-
-#ifdef  USE_FULL_ASSERT
-
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *   where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t* file, uint32_t line)
-{
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-  /* Infinite loop */
-  while (1)
-  {
-  }
-}
-#endif
 
 /*
  * Minimal __assert_func used by the assert() macro
@@ -127,18 +74,4 @@ extern "C" void __assert(const char *file, int line, const char *failedexpr)
    __assert_func (file, line, NULL, failedexpr);
 }
 
-#ifdef USE_SEE
-#ifndef USE_DEFAULT_TIMEOUT_CALLBACK
-/**
-  * @brief  Basic management of the timeout situation.
-  * @param  None.
-  * @retval sEE_FAIL.
-  */
-uint32_t sEE_TIMEOUT_UserCallback(void)
-{
-  /* Return with error code */
-  return sEE_FAIL;
-}
-#endif
-#endif /* USE_SEE */
 
