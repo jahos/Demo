@@ -55,6 +55,7 @@ SOFTWARE.
 #include <stdio.h>
 #include <string.h>
 
+
 /* Create aliases for *printf to integer variants *iprintf */
 __attribute__ ((alias("iprintf"))) int printf(const char *fmt, ...);
 __attribute__ ((alias("fiprintf"))) int fprintf(FILE* fp, const char *fmt, ...);
@@ -351,3 +352,4 @@ size_t fwrite(const void * buf, size_t size, size_t count, FILE * fp)
 {
 	return (_write((fp->_file), (char*)buf, size * count) / size);
 }
+

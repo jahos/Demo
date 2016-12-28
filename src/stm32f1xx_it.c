@@ -29,7 +29,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
-
+#include "stm32f10x.h"
 /** @addtogroup IO_Toggle
   * @{
   */
@@ -142,17 +142,44 @@ void SysTick_Handler(void)
 {
 }
 
-void USART1_IRQHandler()
+int _write(int fd, char *str, int len)
 {
-	uint16_t tmpChar = 0;
-    if (USART_GetITStatus(USART1, USART_IT_RXNE)) {
-    	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
-    	tmpChar = USART_ReceiveData(USART1);
-    	USART_SendData(USART1,tmpChar);
-    	GPIO_SetBits(GPIOC,GPIO_Pin_9);
-    }
+	int i;
+
+	for(i=0; i<len; ++i)
+	{
+		*ptrEnd = *str;
+		ptrEnd++;
+		str++;
+		if(ptrEnd == last)
+		{
+			ptrEnd = &outBuffer[0];
+		}
+	}
+	USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
+	return 0;
 }
 
+void USART1_IRQHandler()
+{
+    if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+    {
+    	char tmpChar;
+    	tmpChar = USART_ReceiveData(USART1);
+    }
+    if (USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
+    {
+    	if(ptrBegin != ptrEnd)
+    	{
+
+    	}
+    	else
+    	{
+    		USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
+    	}
+    	USART_SendData(USART1,'*');
+    }
+}
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

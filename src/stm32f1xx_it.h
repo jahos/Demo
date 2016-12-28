@@ -29,17 +29,27 @@
 #ifndef __STM32F1XX_IT_H
 #define __STM32F1XX_IT_H
 
+
+
+
+#define USART_BUFFER_SIZE	64
+
 #ifdef __cplusplus
  extern "C" {
 #endif 
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
+
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+ /* Local Var --------------------------------------------------------------- */
+char outBuffer[USART_BUFFER_SIZE];
+char* ptrBegin = &outBuffer[0];
+char* ptrEnd = &outBuffer[0];
+const char* last = &outBuffer[USART_BUFFER_SIZE-1];
 
 void NMI_Handler(void);
 void HardFault_Handler(void);
