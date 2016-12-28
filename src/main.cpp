@@ -49,8 +49,7 @@ SOFTWARE.
 int main(void)
 {
 	init();
-
-
+	printf("uC initialied!\n\r");
 	while (1)
 	{
 

@@ -30,6 +30,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
 #include "stm32f10x.h"
+#include "string.h"
 /** @addtogroup IO_Toggle
   * @{
   */
@@ -148,8 +149,8 @@ int _write(int fd, char *str, int len)
 
 	for(i = 0; i < len; ++i)
 	{
-		*(ptrEnd++) = *(str++);
-		if(ptrEnd == last)
+		*(outPtrEnd++) = *(str++);
+		if(outPtrEnd == outlast)
 			break;
 	}
 	USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
@@ -162,17 +163,34 @@ void USART1_IRQHandler()
     {
     	char tmpChar;
     	tmpChar = USART_ReceiveData(USART1);
-    }
-    if (USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
-    {
-    	if(ptrBegin != ptrEnd)
+    	if((uint16_t)tmpChar == ENTER)
     	{
-    		USART_SendData(USART1,*ptrBegin);
-    		ptrBegin++;
+    		GPIO_SetBits(GPIOC,GPIO_Pin_9);
+//    		memcpy(outBuffer,inBuffer,USART_BUFFER_SIZE);
+//    		outPtrEnd = outPtrBegin + (inPtrEnd-inPtrBegin);
+//    		inPtrEnd = &inBuffer[0];
+//    		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
     	}
     	else
     	{
-    		ptrBegin = &outBuffer[0];
+        	if(inPtrEnd != inlast)
+        	{
+        		*inPtrEnd = tmpChar;
+        		USART_SendData(USART1,tmpChar);
+        		inPtrEnd++;
+        	}
+    	}
+    }
+    if (USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
+    {
+    	if(outPtrBegin != outPtrEnd)
+    	{
+    		USART_SendData(USART1,*outPtrBegin);
+    		outPtrBegin++;
+    	}
+    	else
+    	{
+    		outPtrBegin = &outBuffer[0];
     		USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     	}
 
