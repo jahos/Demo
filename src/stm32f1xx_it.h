@@ -32,7 +32,8 @@
 
 
 
-#define USART_BUFFER_SIZE	64
+#define USART_BUFFER_SIZE	100
+#define ENTER 				13
 
 #ifdef __cplusplus
  extern "C" {
@@ -47,9 +48,14 @@
 /* Exported functions ------------------------------------------------------- */
  /* Local Var --------------------------------------------------------------- */
 char outBuffer[USART_BUFFER_SIZE];
-char* ptrBegin = &outBuffer[0];
-char* ptrEnd = &outBuffer[0];
-const char* last = &outBuffer[USART_BUFFER_SIZE-1];
+char* outPtrBegin = &outBuffer[0];
+char* outPtrEnd = &outBuffer[0];
+const char* outlast = &outBuffer[USART_BUFFER_SIZE-1];
+
+char inBuffer[USART_BUFFER_SIZE];
+char* inPtrBegin = &inBuffer[0];
+char* inPtrEnd = &inBuffer[0];
+const char* inlast = &inBuffer[USART_BUFFER_SIZE-1];
 
 void NMI_Handler(void);
 void HardFault_Handler(void);
