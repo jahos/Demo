@@ -32,7 +32,7 @@
 
 
 
-#define USART_BUFFER_SIZE	64
+#define USART_BUFFER_SIZE	40
 
 #ifdef __cplusplus
  extern "C" {

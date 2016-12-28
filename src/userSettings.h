@@ -8,6 +8,9 @@
 #ifndef USERSETTINGS_H_
 #define USERSETTINGS_H_
 
+#define USART1_TX 	GPIO_Pin_9
+#define USART1_RX 	GPIO_Pin_10
+
 void init();
 void initUsart();
 

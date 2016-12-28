@@ -31,7 +31,7 @@ SOFTWARE.
 #include <stdio.h>
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
-
+#include "userSettings.h"
 
 /* Private macro */
 /* Private variables */
@@ -48,13 +48,13 @@ SOFTWARE.
 */
 int main(void)
 {
-//	USART* usr = USART::getInstance();
-//	usr->printSign('R');
-	printf("Jasiek Cwiecek %d",56);
-  while (1)
-  {
+	init();
 
-  }
+
+	while (1)
+	{
+
+	}
 }
 
 /*

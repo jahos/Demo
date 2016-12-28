@@ -70,7 +70,6 @@
 
 #include "stm32f10x.h"
 
-
 /**
   * @}
   */
@@ -273,7 +272,6 @@ void SystemInit (void)
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH. */
 #endif 
-
 
 }
 

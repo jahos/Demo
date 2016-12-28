@@ -146,15 +146,11 @@ int _write(int fd, char *str, int len)
 {
 	int i;
 
-	for(i=0; i<len; ++i)
+	for(i = 0; i < len; ++i)
 	{
-		*ptrEnd = *str;
-		ptrEnd++;
-		str++;
+		*(ptrEnd++) = *(str++);
 		if(ptrEnd == last)
-		{
-			ptrEnd = &outBuffer[0];
-		}
+			break;
 	}
 	USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
 	return 0;
@@ -171,13 +167,15 @@ void USART1_IRQHandler()
     {
     	if(ptrBegin != ptrEnd)
     	{
-
+    		USART_SendData(USART1,*ptrBegin);
+    		ptrBegin++;
     	}
     	else
     	{
+    		ptrBegin = &outBuffer[0];
     		USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     	}
-    	USART_SendData(USART1,'*');
+
     }
 }
 /******************************************************************************/
