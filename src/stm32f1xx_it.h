@@ -29,12 +29,6 @@
 #ifndef __STM32F1XX_IT_H
 #define __STM32F1XX_IT_H
 
-
-
-
-#define USART_BUFFER_SIZE	100
-#define ENTER 				13
-
 #ifdef __cplusplus
  extern "C" {
 #endif 
@@ -47,15 +41,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
  /* Local Var --------------------------------------------------------------- */
-char outBuffer[USART_BUFFER_SIZE];
-char* outPtrBegin = &outBuffer[0];
-char* outPtrEnd = &outBuffer[0];
-const char* outlast = &outBuffer[USART_BUFFER_SIZE-1];
 
-char inBuffer[USART_BUFFER_SIZE];
-char* inPtrBegin = &inBuffer[0];
-char* inPtrEnd = &inBuffer[0];
-const char* inlast = &inBuffer[USART_BUFFER_SIZE-1];
 
 void NMI_Handler(void);
 void HardFault_Handler(void);
@@ -68,6 +54,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void EXTI15_10_IRQHandler(void);
 void USART1_IRQHandler();
+void SPI1_IRQHandler();
 
 #ifdef __cplusplus
 }

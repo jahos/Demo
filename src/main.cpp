@@ -27,12 +27,12 @@ SOFTWARE.
 */
 
 /* Includes */
+
 #include <stddef.h>
 #include <stdio.h>
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
-
 /* Private macro */
 /* Private variables */
 
@@ -46,9 +46,11 @@ SOFTWARE.
 **
 **===========================================================================
 */
+
 int main(void)
 {
 	init();
+	printf("Witaj!\n\r");
 
 	while (1)
 	{
