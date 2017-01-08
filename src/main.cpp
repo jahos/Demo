@@ -27,6 +27,7 @@ SOFTWARE.
 */
 
 /* Includes */
+
 #include <stddef.h>
 #include <stdio.h>
 #include "stm32f10x.h"
@@ -46,10 +47,18 @@ SOFTWARE.
 **
 **===========================================================================
 */
+
+int dodaj(int k)
+{
+	return k+k;
+}
+
 int main(void)
 {
 	init();
-	printf("uC initialied!\n\r");
+
+	printf("Witaj !\n\r");
+
 	while (1)
 	{
 
