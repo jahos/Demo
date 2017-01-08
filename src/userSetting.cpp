@@ -11,7 +11,9 @@
 
 void init()
 {
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 	initUsart();
+	initSPI();
 }
 
 void initUsart()
@@ -52,8 +54,59 @@ void initUsart()
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 6;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
 	NVIC_EnableIRQ(USART1_IRQn);
+}
+
+void initSPI()
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_AFIO,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+
+	GPIO_InitTypeDef spiGpio;
+	spiGpio.GPIO_Mode =		GPIO_Mode_AF_PP;
+	spiGpio.GPIO_Pin = 		MOSI_PIN | CLK_PIN | CS_PIN;
+	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA,&spiGpio);
+
+	spiGpio.GPIO_Mode = 	GPIO_Mode_Out_PP;
+	spiGpio.GPIO_Pin =		RES_PIN;
+	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC,&spiGpio);
+
+	spiGpio.GPIO_Mode = 	GPIO_Mode_Out_PP;
+	spiGpio.GPIO_Pin =		D_C_PIN | CS_PIN ;
+	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA,&spiGpio);
+
+	GPIO_SetBits(GPIOC, RES_PIN);
+	GPIO_SetBits(GPIOA, D_C_PIN );
+
+	SPI_InitTypeDef spiConfig;
+	SPI_StructInit(&spiConfig);
+	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+	spiConfig.SPI_Mode = SPI_Mode_Master;
+	spiConfig.SPI_NSS = SPI_NSS_Hard;
+	spiConfig.SPI_DataSize = SPI_DataSize_8b;
+	spiConfig.SPI_Direction = SPI_Direction_1Line_Tx;
+	spiConfig.SPI_FirstBit = SPI_FirstBit_MSB;
+	spiConfig.SPI_CPOL = SPI_CPOL_High;
+	spiConfig.SPI_CPHA = SPI_CPHA_2Edge;
+	spiConfig.SPI_CRCPolynomial = 7;
+	SPI_Init(SPI1,&spiConfig);
+	SPI_SSOutputCmd(SPI1,ENABLE);
+	SPI_Cmd(SPI1,ENABLE);
+
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = SPI1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	NVIC_EnableIRQ(SPI1_IRQn);
 }
 
 

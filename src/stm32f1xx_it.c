@@ -31,16 +31,26 @@
 #include "stm32f1xx_it.h"
 #include "stm32f10x.h"
 #include "string.h"
+
+#include "common.h"
+
 /** @addtogroup IO_Toggle
   * @{
   */
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+#define USART_BUFFER_SIZE	100
+#define SPI_BUFFER_SIZE     64
+#define ENTER 				13
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+/* Global Variable -----------------------------------------------------------*/
+
+
+static BufferS_t outBuffer;
+static BufferS_t inBuffer;
 
 /******************************************************************************/
 /*            Cortex-M Processor Exceptions Handlers                          */
@@ -143,17 +153,37 @@ void SysTick_Handler(void)
 {
 }
 
+uint8_t getBufferCapacity()
+{
+    uint8_t cap = BUFFER_SIZE;
+    if(outBuffer.startIndex > outBuffer.endIntex)
+    {
+        cap = outBuffer.startIndex - (outBuffer.endIntex + 1);
+    }
+    else if(outBuffer.startIndex < outBuffer.endIntex)
+    {
+        cap = (outBuffer.startIndex + BUFFER_SIZE) - (outBuffer.endIntex + 1);
+    }
+    return cap;
+}
+
+
 int _write(int fd, char *str, int len)
 {
-	int i;
-
-	for(i = 0; i < len; ++i)
+	while(len)
 	{
-		*(outPtrEnd++) = *(str++);
-		if(outPtrEnd == outlast)
-			break;
-	}
-	USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
+		int capacity = getBufferCapacity();
+		capacity = (capacity > len) ? len : capacity;
+		int i = 0;
+
+		for(i = 0; i < capacity; ++i)
+		{
+			outBuffer.endIntex = (outBuffer.endIntex % BUFFER_SIZE);
+			outBuffer.buffer[outBuffer.endIntex++] = *(str++);
+			outBuffer.wordCount++;
+			len--;
+		}
+		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
 	return 0;
 }
 
@@ -163,39 +193,47 @@ void USART1_IRQHandler()
     {
     	char tmpChar;
     	tmpChar = USART_ReceiveData(USART1);
-    	if((uint16_t)tmpChar == ENTER)
-    	{
-    		GPIO_SetBits(GPIOC,GPIO_Pin_9);
-//    		memcpy(outBuffer,inBuffer,USART_BUFFER_SIZE);
-//    		outPtrEnd = outPtrBegin + (inPtrEnd-inPtrBegin);
-//    		inPtrEnd = &inBuffer[0];
-//    		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
-    	}
-    	else
-    	{
-        	if(inPtrEnd != inlast)
-        	{
-        		*inPtrEnd = tmpChar;
-        		USART_SendData(USART1,tmpChar);
-        		inPtrEnd++;
-        	}
-    	}
+
+//    	if((uint16_t)tmpChar == ENTER)
+//    	{
+//    		GPIO_SetBits(GPIOC,GPIO_Pin_9);
+////    		memcpy(outBuffer,inBuffer,USART_BUFFER_SIZE);
+////    		outPtrEnd = outPtrBegin + (inPtrEnd-inPtrBegin);
+////    		inPtrEnd = &inBuffer[0];
+////    		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
+//    	}
+//    	else
+//    	{
+//        	if(inPtrEnd != inlast)
+//        	{
+//        		*inPtrEnd = tmpChar;
+//        		USART_SendData(USART1,tmpChar);
+//        		inPtrEnd++;
+//        	}
+//    	}
     }
     if (USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
     {
-    	if(outPtrBegin != outPtrEnd)
+    	if(outBuffer.wordCount > 0)
     	{
-    		USART_SendData(USART1,*outPtrBegin);
-    		outPtrBegin++;
+    		USART_SendData(USART1,outBuffer.buffer[outBuffer.startIndex++]);
+    		outBuffer.startIndex = (outBuffer.startIndex % BUFFER_SIZE);
+    		outBuffer.wordCount--;
     	}
     	else
     	{
-    		outPtrBegin = &outBuffer[0];
     		USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     	}
 
     }
 }
+
+void SPI1_IRQHandler()
+{
+
+}
+
+
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
