@@ -151,22 +151,34 @@ void SysTick_Handler(void)
 {
 }
 
+uint8_t getBufferCapacity()
+{
+    uint8_t cap = BUFFER_SIZE;
+    if(outBuffer.startIndex > outBuffer.endIntex)
+    {
+        cap = outBuffer.startIndex - (outBuffer.endIntex + 1);
+    }
+    else if(outBuffer.startIndex < outBuffer.endIntex)
+    {
+        cap = (outBuffer.startIndex + BUFFER_SIZE) - (outBuffer.endIntex + 1);
+    }
+    return cap;
+}
+
 int _write(int fd, char *str, int len)
 {
-	int i;
-
-	if(outBuffer.ovr== 0)
+	while(len)
 	{
-		for(i = 0; i < len; ++i)
+		int capacity = getBufferCapacity();
+		capacity = (capacity > len) ? len : capacity;
+		int i = 0;
+
+		for(i = 0; i < capacity; ++i)
 		{
+			outBuffer.endIntex = (outBuffer.endIntex % BUFFER_SIZE);
 			outBuffer.buffer[outBuffer.endIntex++] = *(str++);
-			outBuffer.endIntex = (outBuffer.endIntex % USART_BUFFER_SIZE);
 			outBuffer.wordCount++;
-			if(outBuffer.startIndex == outBuffer.endIntex)
-			{
-				outBuffer.ovr = 1;
-				USART_SendData(USART1,'#');
-			}
+			len--;
 		}
 		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
 	}
@@ -202,19 +214,23 @@ void USART1_IRQHandler()
     	if(outBuffer.wordCount > 0)
     	{
     		USART_SendData(USART1,outBuffer.buffer[outBuffer.startIndex++]);
-    		outBuffer.startIndex = (outBuffer.startIndex % USART_BUFFER_SIZE);
+    		outBuffer.startIndex = (outBuffer.startIndex % BUFFER_SIZE);
     		outBuffer.wordCount--;
     	}
     	else
     	{
-    		outBuffer.ovr = 0;
+
     		USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     	}
 
     }
 }
 
-extern void SPI1_IRQHandler();
+void SPI1_IRQHandler()
+{
+
+}
+
 
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */

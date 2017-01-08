@@ -15,7 +15,7 @@ typedef struct
 	uint8_t startIndex;			//first byte to send
 	uint8_t endIntex;			//last byte to send
 	uint8_t wordCount;			//amount of byte to send
-	uint8_t ovr;				//overwrite
+	uint8_t capacity;
 } BufferS_t;
 
 #endif /* COMMON_H_ */

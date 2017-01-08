@@ -47,10 +47,19 @@ SOFTWARE.
 **===========================================================================
 */
 
+int dodaj(int k)
+{
+	return k+k;
+}
+
 int main(void)
 {
 	init();
-	printf("Witaj!\n\r");
+	for(int i = 0; i < 10; i++)
+	{
+		printf("[%d]Witaj!\n\r",i);
+	}
+
 
 	while (1)
 	{

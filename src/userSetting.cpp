@@ -67,7 +67,7 @@ void initSPI()
 
 	GPIO_InitTypeDef spiGpio;
 	spiGpio.GPIO_Mode =		GPIO_Mode_AF_PP;
-	spiGpio.GPIO_Pin = 		MOSI_PIN | CLK_PIN ;
+	spiGpio.GPIO_Pin = 		MOSI_PIN | CLK_PIN | CS_PIN;
 	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&spiGpio);
 
@@ -82,13 +82,13 @@ void initSPI()
 	GPIO_Init(GPIOA,&spiGpio);
 
 	GPIO_SetBits(GPIOC, RES_PIN);
-	GPIO_SetBits(GPIOA, D_C_PIN | CS_PIN);
+	GPIO_SetBits(GPIOA, D_C_PIN );
 
 	SPI_InitTypeDef spiConfig;
 	SPI_StructInit(&spiConfig);
 	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
 	spiConfig.SPI_Mode = SPI_Mode_Master;
-	spiConfig.SPI_NSS = SPI_NSS_Soft;
+	spiConfig.SPI_NSS = SPI_NSS_Hard;
 	spiConfig.SPI_DataSize = SPI_DataSize_8b;
 	spiConfig.SPI_Direction = SPI_Direction_1Line_Tx;
 	spiConfig.SPI_FirstBit = SPI_FirstBit_MSB;
