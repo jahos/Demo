@@ -205,6 +205,7 @@ void USART1_IRQHandler()
     		inBuffer.endIntex = (inBuffer.endIntex % BUFFER_SIZE);
     		inBuffer.buffer[inBuffer.endIntex++] = tmpChar;
     		inBuffer.wordCount++;
+
     		USART_SendData(USART1,tmpChar);
     	}
     }
