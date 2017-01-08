@@ -31,7 +31,9 @@
 #include "stm32f1xx_it.h"
 #include "stm32f10x.h"
 #include "string.h"
+
 #include "common.h"
+
 /** @addtogroup IO_Toggle
   * @{
   */
@@ -165,6 +167,7 @@ uint8_t getBufferCapacity()
     return cap;
 }
 
+
 int _write(int fd, char *str, int len)
 {
 	while(len)
@@ -181,7 +184,6 @@ int _write(int fd, char *str, int len)
 			len--;
 		}
 		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
-	}
 	return 0;
 }
 
@@ -191,6 +193,7 @@ void USART1_IRQHandler()
     {
     	char tmpChar;
     	tmpChar = USART_ReceiveData(USART1);
+
 //    	if((uint16_t)tmpChar == ENTER)
 //    	{
 //    		GPIO_SetBits(GPIOC,GPIO_Pin_9);
@@ -219,7 +222,6 @@ void USART1_IRQHandler()
     	}
     	else
     	{
-
     		USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     	}
 

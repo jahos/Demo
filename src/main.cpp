@@ -33,6 +33,7 @@ SOFTWARE.
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
+
 /* Private macro */
 /* Private variables */
 
@@ -55,11 +56,11 @@ int dodaj(int k)
 int main(void)
 {
 	init();
+
 	for(int i = 0; i < 10; i++)
 	{
 		printf("[%d]Witaj!\n\r",i);
 	}
-
 
 	while (1)
 	{

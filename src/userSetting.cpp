@@ -54,7 +54,6 @@ void initUsart()
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 6;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
 	NVIC_EnableIRQ(USART1_IRQn);
 }
 
