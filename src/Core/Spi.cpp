@@ -17,14 +17,20 @@ Spi* Spi::spiInstance = 0;
 int getMessage()
 {
 	Spi& spiInstance = Spi::getInstance();
-	int retVal = BUFFER_EMPTY;
+	int msg = BUFFER_EMPTY;
 
 	if(!(spiInstance.buffer.empty()))
 	{
-		retVal =  spiInstance.buffer.front();
+		CommandS command = spiInstance.buffer.front();
+		msg = command.msg;
+
+		//update D/C# line
+		GPIO_WriteBit(GPIOA,D_C_PIN, (BitAction)command.d_c);
+
+		//remove job from queue
 		spiInstance.buffer.pop();
 	}
-	return retVal;
+	return msg;
 }
 
 /*---------------private methods-----------------------------------------------*/
@@ -36,9 +42,12 @@ Spi& Spi::getInstance()
 	return retInstance;
 }
 
-void Spi::addToQ(int msg)
+void Spi::addToQ(int msg,CommandE d_c)
 {
-	buffer.push(msg);
+	CommandS command;
+	command.msg = msg;
+	command.d_c = d_c;
+	buffer.push(command);
 }
 
 Spi::~Spi()
@@ -127,6 +136,7 @@ void SPI1_IRQHandler()
 	   if (SPI_I2S_GetITStatus(SPI1, SPI_I2S_IT_RXNE) != RESET)
 	   {
 		   uint8_t tmp = SPI_I2S_ReceiveData(SPI1);
+		   printf("%c",tmp);
 	   }
 
 }
