@@ -61,10 +61,10 @@ int main(void)
 	printf("Witaj !\n\r");
 
 	Spi& spiInstance = Spi::getInstance();
-	spiInstance.addToQ(170);
+	spiInstance.addToQ(170,COMMAND);
 	for(int i =33; i<93; ++i)
 	{
-		spiInstance.addToQ(i);
+		spiInstance.addToQ(i,(CommandE)(i%2));
 	}
 	SPI_I2S_ITConfig(SPI1,SPI_I2S_IT_TXE,ENABLE);
 

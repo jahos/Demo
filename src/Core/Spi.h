@@ -28,7 +28,17 @@
 
 #define BUFFER_EMPTY	256
 
+enum CommandE
+{
+		COMMAND = 0
+	,	DATA	= 1
+};
 
+struct CommandS
+{
+	int msg;
+	CommandE d_c;
+};
 
 int getMessage();
 
@@ -52,7 +62,7 @@ private:
 	void initSpi();
 
 	/*queue for as buffer of command*/
-	std::queue<int> buffer;
+	std::queue<CommandS> buffer;
 
 	/*Instance to SPI object*/
 	static Spi* spiInstance;
@@ -76,7 +86,7 @@ public:
 	 * @param  Message which should be send
 	 * @retval None
 	 */
-	void addToQ(int msg);
+	void addToQ(int msg,CommandE d_c);
 
 	/*destructor*/
 	~Spi();
