@@ -225,10 +225,7 @@ void USART1_IRQHandler()
     }
 }
 
-void SPI1_IRQHandler()
-{
-
-}
+extern void SPI1_IRQHandler();
 
 
 /******************************************************************************/

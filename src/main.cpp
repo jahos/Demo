@@ -33,6 +33,7 @@ SOFTWARE.
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
+#include "Core/Spi.h"
 
 /* Private macro */
 /* Private variables */
@@ -58,6 +59,19 @@ int main(void)
 	init();
 
 	printf("Witaj !\n\r");
+
+	Spi& spiInstance = Spi::getInstance();
+	spiInstance.addToQ(170);
+	for(int i =33; i<93; ++i)
+	{
+		spiInstance.addToQ(i,(CommandE)(i%2));
+	}
+	spiInstance.addToQ(170);
+	spiInstance.addToQ(170);
+	spiInstance.addToQ(170);
+	spiInstance.addToQ(170);
+	SPI_I2S_ITConfig(SPI1,SPI_I2S_IT_TXE,ENABLE);
+
 
 	while (1)
 	{
