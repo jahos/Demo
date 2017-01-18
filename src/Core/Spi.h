@@ -11,21 +11,6 @@
 #include <queue>
 #include <stdint.h>
 
-/*Pins Config SPI1
- * CLK 	PA5
- * MOSI	PA7
- * CS	PA4
- *
- * D_C	PA6
- * RES	PC4
- * */
-
-#define CLK_PIN		GPIO_Pin_5
-#define CS_PIN  	GPIO_Pin_4
-#define MOSI_PIN	GPIO_Pin_7
-#define D_C_PIN 	GPIO_Pin_6
-#define RES_PIN 	GPIO_Pin_4
-
 #define BUFFER_EMPTY	256
 
 enum CommandE
@@ -40,56 +25,65 @@ struct CommandS
 	CommandE d_c;
 };
 
-int getMessage();
+enum SpiE
+{
+		eSPI1 = 0
+	,	eSPI2 = 1
+	, 	eSPI3 = 2
+};
+
 
 class Spi {
 
 private:
-	/**
-	 * @brief  Private Construction -only one instance will be requre
-	 * @param  None
-	 * @retval None
-	 */
-	Spi();
-	Spi(const Spi&);
 
-	/**
-	 * @brief  Set up SPI1 and NVIC interrup for SPI
-	 * @note   This function should be used only after reset.
-	 * @param  None
-	 * @retval None
-	 */
-	void initSpi();
+	/*queue for as outBuffer of command*/
+	std::queue<CommandS> outBuffer;
 
-	/*queue for as buffer of command*/
-	std::queue<CommandS> buffer;
+	/*queue for as inBuffer of command*/
+	std::queue<int> inBuffer;
 
-	/*Instance to SPI object*/
-	static Spi* spiInstance;
+	/**/
+	uint16_t pin_CS;
+	uint16_t pin_D_C;
+	GPIO_TypeDef* portGPIOx;
 
 public:
-	/**
-	 * @brief  Get message from Queue
-	 * @param  Instance of SPI object
-	 * @retval None
-	 */
-	friend int getMessage();
 
+	SpiE ID;
+
+	/*Sending data*/
 	/**
-	 * @brief  Get SPI instance
-	 * @param  none
-	 * @retval Instance to SPI object
-	 */
-	static Spi& getInstance();
-	/**
-	 * @brief  Add message to Queue
-	 * @param  Message which should be send
+	 * @brief  Add message to outBuffer
+	 * @param1 Message which should be send
+	 * @param2 Type of message
 	 * @retval None
 	 */
 	void addToQ(int msg,CommandE d_c = COMMAND);
 
+	/**
+	 * @brief  Get message from outBuffer and send
+	 * @retval None
+	 */
+	int getMessage();
+
+	/*Receiving data*/
+
+	/**
+	 * @brief  copy received data to inBuffer
+	 * @param  Instance of SPI object
+	 * @retval None
+	 */
+	void storeData();
+
+	/**
+	 * @brief  Get data from inBUffer
+	 * @retval byte
+	 */
+	int getData();
+
 	/*destructor*/
-	~Spi();
+	virtual ~Spi() {};
 };
 
 /**
