@@ -8,12 +8,13 @@
 #include "stm32f10x_usart.h"
 #include "stm32f10x_gpio.h"
 #include "userSettings.h"
-
+#define CLK_FREQ 24000000
 void init()
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 	initUsart();
 	initSPI();
+	SysTick_Config(2400000);
 }
 
 void initUsart()
@@ -69,28 +70,28 @@ void initSPI()
 
 	GPIO_InitTypeDef spiGpio;
 	spiGpio.GPIO_Mode =		GPIO_Mode_AF_PP;
-	spiGpio.GPIO_Pin = 		MOSI_PIN | CLK_PIN | CS_PIN;
+	spiGpio.GPIO_Pin = 		SPI1_MOSI_PIN | SPI1_CLK_PIN ;
 	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&spiGpio);
 
 	spiGpio.GPIO_Mode = 	GPIO_Mode_Out_PP;
-	spiGpio.GPIO_Pin =		RES_PIN;
+	spiGpio.GPIO_Pin =		SPI1_RES_PIN;
 	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC,&spiGpio);
 
 	spiGpio.GPIO_Mode = 	GPIO_Mode_Out_PP;
-	spiGpio.GPIO_Pin =		D_C_PIN | CS_PIN ;
+	spiGpio.GPIO_Pin =		SPI1_D_C_PIN | SPI1_CS_PIN ;
 	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&spiGpio);
 
-	GPIO_SetBits(GPIOC, RES_PIN);
-	GPIO_SetBits(GPIOA, D_C_PIN );
+	GPIO_SetBits(GPIOC, SPI1_RES_PIN);
+	GPIO_SetBits(GPIOA, SPI1_D_C_PIN | SPI1_CS_PIN );
 
 	SPI_InitTypeDef spiConfig;
 	SPI_StructInit(&spiConfig);
 	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
 	spiConfig.SPI_Mode = SPI_Mode_Master;
-	spiConfig.SPI_NSS = SPI_NSS_Hard;
+	spiConfig.SPI_NSS = SPI_NSS_Soft;
 	spiConfig.SPI_DataSize = SPI_DataSize_8b;
 	spiConfig.SPI_Direction = SPI_Direction_1Line_Tx;
 	spiConfig.SPI_FirstBit = SPI_FirstBit_MSB;
@@ -112,7 +113,43 @@ void initSPI()
 	NVIC_EnableIRQ(SPI1_IRQn);
 
 	/*------------------SPI2------------------------------------------------*/
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
+	GPIO_InitTypeDef spi2Gpio;
+	spi2Gpio.GPIO_Mode =	GPIO_Mode_AF_PP;
+	spi2Gpio.GPIO_Pin = 	SPI2_MOSI_PIN | SPI2_CLK_PIN | SPI2_MISO_PIN;
+	spi2Gpio.GPIO_Speed = 	GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB,&spi2Gpio);
+
+	spiGpio.GPIO_Mode = 	GPIO_Mode_Out_PP;
+	spiGpio.GPIO_Pin =		SPI2_CS_PIN;
+	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB,&spi2Gpio);
+
+	GPIO_SetBits(GPIOB, SPI2_CS_PIN);
+
+	SPI_StructInit(&spiConfig);
+	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+	spiConfig.SPI_Mode = SPI_Mode_Master;
+	spiConfig.SPI_NSS = SPI_NSS_Soft;
+	spiConfig.SPI_DataSize = SPI_DataSize_8b;
+	spiConfig.SPI_Direction = SPI_Direction_1Line_Tx;
+	spiConfig.SPI_FirstBit = SPI_FirstBit_MSB;
+	spiConfig.SPI_CPOL = SPI_CPOL_High;
+	spiConfig.SPI_CPHA = SPI_CPHA_2Edge;
+	spiConfig.SPI_CRCPolynomial = 7;
+	SPI_Init(SPI2,&spiConfig);
+	SPI_SSOutputCmd(SPI2,ENABLE);
+	SPI_Cmd(SPI2,ENABLE);
+
+	NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	NVIC_EnableIRQ(SPI2_IRQn);
 	/*------------------SPI3------------------------------------------------*/
 }
 

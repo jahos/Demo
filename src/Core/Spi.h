@@ -10,6 +10,7 @@
 
 #include <queue>
 #include <stdint.h>
+#include "stm32f10x_gpio.h"
 
 #define BUFFER_EMPTY	256
 
@@ -35,7 +36,7 @@ enum SpiE
 
 class Spi {
 
-private:
+protected:
 
 	/*queue for as outBuffer of command*/
 	std::queue<CommandS> outBuffer;
@@ -74,7 +75,7 @@ public:
 	 * @param  Instance of SPI object
 	 * @retval None
 	 */
-	void storeData();
+	void storeData(int byte);
 
 	/**
 	 * @brief  Get data from inBUffer

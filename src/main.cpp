@@ -34,6 +34,7 @@ SOFTWARE.
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
 #include "Core/SPI1class.h"
+#include "Core/SPI2class.h"
 
 /* Private macro */
 /* Private variables */
@@ -56,18 +57,23 @@ int main(void)
 
 	printf("Witaj !\n\r");
 
-//	Spi& spiInstance = Spi::getInstance();
-//	spiInstance.addToQ(170);
-//	for(int i =33; i<93; ++i)
-//	{
-//		spiInstance.addToQ(i,(CommandE)(i%2));
-//	}
-//	spiInstance.addToQ(170);
-//	spiInstance.addToQ(170);
-//	spiInstance.addToQ(170);
-//	spiInstance.addToQ(170);
-//	SPI_I2S_ITConfig(SPI1,SPI_I2S_IT_TXE,ENABLE);
+	SPI2_class & sp = SPI2_class::getInstance();
+	SPI1_class& spiInstance = SPI1_class::getInstance();
 
+
+	for(int i=0; i<100;i++)
+	{
+		if(i%2)
+		{
+			sp.addToQ(i);
+		}
+		else
+		{
+			spiInstance.addToQ(i);
+		}
+	}
+	sp.send();
+	spiInstance.send();
 
 	while (1)
 	{

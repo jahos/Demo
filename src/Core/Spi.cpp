@@ -30,10 +30,10 @@ int Spi::getMessage()
 		//update D/C# line
 		GPIO_WriteBit(GPIOA,pin_D_C, (BitAction)command.d_c);
 
-		GPIO_ResetBits(GPIOA,pin_CS);
+		GPIO_ResetBits(GPIOB,pin_CS);
 
 		//remove job from queue
-		spiInstance.outBuffer.pop();
+		outBuffer.pop();
 	}
 	return msg;
 }

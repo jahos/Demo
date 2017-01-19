@@ -10,14 +10,6 @@
 
 #include "Spi.h"
 
-extern "C"
-{
-	int SPI1_IRQHandler();
-	int SPI2_IRQHandler();
-	int SPI3_IRQHandler();
-}
-
-
 class SPI1_class : public Spi
 {
 private:
@@ -25,7 +17,7 @@ private:
 		/*Instance to SPI object*/
 	static SPI1_class * spiInstance;
 public:
-	static CSpi1 & getInstance();
+	static SPI1_class & getInstance();
 	void send();
 	~SPI1_class();
 };
