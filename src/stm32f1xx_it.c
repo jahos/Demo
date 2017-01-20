@@ -33,6 +33,7 @@
 #include "string.h"
 
 #include "common.h"
+#include <stdio.h>
 
 /** @addtogroup IO_Toggle
   * @{
@@ -147,9 +148,7 @@ void PendSV_Handler(void)
   * @param  None
   * @retval None
   */
-void SysTick_Handler(void)
-{
-}
+
 
 uint8_t getBufferCapacity(BufferS_t* buf)
 {
@@ -184,6 +183,12 @@ int _write(int fd, char *str, int len)
 		USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
 	}
 	return 0;
+}
+
+void SysTick_Handler(void)
+{
+	char c = '#';
+	_write(0,&c,1);
 }
 
 void USART1_IRQHandler()
@@ -226,7 +231,7 @@ void USART1_IRQHandler()
 }
 
 extern void SPI1_IRQHandler();
-
+extern void SPI2_IRQHandler();
 
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */
