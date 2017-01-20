@@ -16,6 +16,7 @@ void Spi::addToQ(int msg,CommandE d_c)
 	command.msg = msg;
 	command.d_c = d_c;
 	outBuffer.push(command);
+	//koment test
 }
 
 int Spi::getMessage()
