@@ -13,12 +13,15 @@
 class HIH6030
 {
 private:
-	int temperature;
-	int humidity;
-	uint16_t pinCS;
-	SPI2_class sp;
+	float m_temperature;
+	float m_humidity;
+	std::queue<int> m_outBuf;
+	std::queue<int> m_inBuf;
+	CSsetS m_csSetting;
+	SPI2_class * m_sp;
 public:
 	void measureRequest();
+	void getMeasurements();
 	int getTemperature();
 	int getHumidity();
 	HIH6030();

@@ -27,16 +27,10 @@ bool setPointers(int (*a_pGetByte)()
 	return retVal;
 }
 
-<<<<<<< HEAD
-extern "C"
-{
 
-void SPI1_IRQHandler()
+extern "C" void SPI1_IRQHandler()
 {
 	if((pEnableCS != 0) && (pGetByte != 0) && (pStoreByte != 0))
-=======
-extern "C" 	void SPI1_IRQHandler()
->>>>>>> sketch of classes
 	{
 		if((pEnableCS != 0) && (pGetByte != 0) && (pStoreByte != 0))
 		{
@@ -66,4 +60,5 @@ extern "C" 	void SPI1_IRQHandler()
 			printf("NULL pointers SPI1_IRQHandler\n\r");
 		}
 	}
+}
 

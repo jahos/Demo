@@ -14,6 +14,8 @@
 
 #define BUFFER_EMPTY	256
 
+typedef std::queue<int> BufferQueue;
+
 enum CommandE
 {
 		COMMAND = 0
@@ -33,55 +35,23 @@ enum SpiE
 	, 	eSPI3 = 2
 };
 
+struct CSsetS
+{
+	GPIO_TypeDef* gpioType;
+	uint16_t csPin;
+};
 
 class Spi {
 
-protected:
-
-	/*queue for as outBuffer of command*/
-	std::queue<CommandS> outBuffer;
-
-	/*queue for as inBuffer of command*/
-	std::queue<int> inBuffer;
-
-	/**/
-	uint16_t pin_CS;
-	uint16_t pin_D_C;
-	GPIO_TypeDef* portGPIOx;
-
 public:
 
-	SpiE ID;
+	virtual bool isBusy() = 0;
 
-	/*Sending data*/
-	/**
-	 * @brief  Add message to outBuffer
-	 * @param1 Message which should be send
-	 * @param2 Type of message
-	 * @retval None
-	 */
-	void addToQ(int msg,CommandE d_c = COMMAND);
+	virtual int getByte() = 0;
 
-	/**
-	 * @brief  Get message from outBuffer and send
-	 * @retval None
-	 */
-	int getMessage();
+	virtual void storeByte(int byte) = 0;
 
-	/*Receiving data*/
-
-	/**
-	 * @brief  copy received data to inBuffer
-	 * @param  Instance of SPI object
-	 * @retval None
-	 */
-	void storeData(int byte);
-
-	/**
-	 * @brief  Get data from inBUffer
-	 * @retval byte
-	 */
-	int getData();
+	virtual void send() = 0;
 
 	/*destructor*/
 	virtual ~Spi() {};

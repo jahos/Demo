@@ -116,25 +116,24 @@ void initSPI()
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-	GPIO_InitTypeDef spi2Gpio;
-	spi2Gpio.GPIO_Mode =	GPIO_Mode_AF_PP;
-	spi2Gpio.GPIO_Pin = 	SPI2_MOSI_PIN | SPI2_CLK_PIN | SPI2_MISO_PIN;
-	spi2Gpio.GPIO_Speed = 	GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB,&spi2Gpio);
+	spiGpio.GPIO_Mode =	GPIO_Mode_AF_PP;
+	spiGpio.GPIO_Pin = 	SPI2_MOSI_PIN | SPI2_CLK_PIN | SPI2_MISO_PIN;
+	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB,&spiGpio);
 
 	spiGpio.GPIO_Mode = 	GPIO_Mode_Out_PP;
 	spiGpio.GPIO_Pin =		SPI2_CS_PIN;
 	spiGpio.GPIO_Speed = 	GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB,&spi2Gpio);
+	GPIO_Init(GPIOB,&spiGpio);
 
 	GPIO_SetBits(GPIOB, SPI2_CS_PIN);
 
 	SPI_StructInit(&spiConfig);
-	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
 	spiConfig.SPI_Mode = SPI_Mode_Master;
 	spiConfig.SPI_NSS = SPI_NSS_Soft;
 	spiConfig.SPI_DataSize = SPI_DataSize_8b;
-	spiConfig.SPI_Direction = SPI_Direction_1Line_Tx;
+	spiConfig.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
 	spiConfig.SPI_FirstBit = SPI_FirstBit_MSB;
 	spiConfig.SPI_CPOL = SPI_CPOL_High;
 	spiConfig.SPI_CPHA = SPI_CPHA_2Edge;

@@ -10,67 +10,131 @@
 #include <stdio.h>
 #include <queue>
 
-SPI2_class* SPI2_class::spiInstance = 0;
 
-static int (*ptrFunGet2)() = 0;
-static void (*ptrFunStore2)(int byte) = 0;
 
-static int getByte()
-{
-	int retVal = BUFFER_EMPTY;
-	SPI2_class & sp = SPI2_class::getInstance();
-	retVal = sp.getMessage();
-	return retVal;
-}
+static int (*pGetByte)() = 0;
+static void (*pStoreByte)(int byte) = 0;
+static void (*pDisableCS)() = 0;
 
 static void storeByte(int byte)
 {
 	SPI2_class & sp = SPI2_class::getInstance();
-	sp.storeData(byte);
+	sp.storeByte(byte);
+}
+
+static int getByte()
+{
+	SPI2_class & sp = SPI2_class::getInstance();
+	int retVal = sp.getByte();
+	return retVal;
+}
+
+static void disableCS()
+{
+	SPI2_class & sp = SPI2_class::getInstance();
+	if(sp.isLastByte())
+	{
+		sp.disableCS();
+	}
 }
 
 SPI2_class& SPI2_class::getInstance()
 {
 	static SPI2_class sp;
-	spiInstance = &sp;
 	return sp;
 }
 
 SPI2_class::SPI2_class()
 {
-	ID = eSPI2;
-	pin_CS = SPI2_CS_PIN;
-	pin_D_C = SPI1_D_C_PIN;
-
-	ptrFunGet2 = getByte;
-	ptrFunStore2 = storeByte;
+	m_inBuffer = 0;
+	m_outBuffer = 0;
+	pStoreByte = ::storeByte;
+	pGetByte = ::getByte;
+	pDisableCS = ::disableCS;
 }
 
-SPI2_class::~SPI2_class()
+void SPI2_class::setBuffers(BufferQueue* inBuf, BufferQueue* outBuf)
 {
-	spiInstance = 0;
+	m_inBuffer = inBuf;
+	m_outBuffer = outBuf;
+}
+
+void SPI2_class::setCS(CSsetS settings)
+{
+	m_csSet.gpioType = settings.gpioType;
+	m_csSet.csPin = settings.csPin;
+}
+
+void SPI2_class::disableCS()
+{
+	GPIO_SetBits(m_csSet.gpioType,m_csSet.csPin);
+}
+
+bool SPI2_class::isBusy()
+{
+	bool state = SPI_I2S_GetITStatus(SPI2,SPI_I2S_IT_TXE);
+	return state;
+}
+
+int SPI2_class::getByte()
+{
+	int byteToSend = BUFFER_EMPTY;
+	if(m_outBuffer != 0)
+	{
+		if(m_outBuffer->size() != 0 )
+		{
+			byteToSend = m_outBuffer->front();
+			GPIO_ResetBits(m_csSet.gpioType,m_csSet.csPin);
+			m_outBuffer->pop();
+		}
+	}
+	else
+	{
+		printf("m_outBuffer NULL\n\r");
+	}
+	return byteToSend;
+}
+
+void SPI2_class::storeByte(int byte)
+{
+	if(m_inBuffer != 0)
+	{
+		m_inBuffer->push(byte);
+	}
+	else
+	{
+		printf("m_inBuffer NULL\n\r");
+	}
 }
 
 void SPI2_class::send()
 {
 	SPI_I2S_ITConfig(SPI2,SPI_I2S_IT_TXE,ENABLE);
+	SPI_I2S_ITConfig(SPI2,SPI_I2S_IT_RXNE,ENABLE);
 }
 
-void SPI2_class::printAll()
+bool SPI2_class::isLastByte()
 {
-	printf("Posiada [%d]",outBuffer.size());
+	bool retVal = false;
+	if(m_outBuffer->size() < 1)
+	{
+		retVal =  true;
+	}
+	return retVal;
 }
 
-extern "C"
+SPI2_class::~SPI2_class()
 {
 
-void SPI2_IRQHandler()
+}
+
+extern "C" void SPI2_IRQHandler()
 {
-	GPIO_SetBits(GPIOB,SPI2_CS_PIN);
+	pDisableCS();
 
 	if(SPI_I2S_GetITStatus(SPI2,SPI_I2S_IT_TXE) != RESET)
 	{
-		int c = ptrFunGet2();
+		int c = pGetByte();
 		if(c <= 0xFF)
 		{
 			SPI_I2S_SendData(SPI2,(uint8_t)c);
@@ -84,10 +148,11 @@ void SPI2_IRQHandler()
 
 	if (SPI_I2S_GetITStatus(SPI2, SPI_I2S_IT_RXNE) != RESET)
 	{
-		int tmp = SPI_I2S_ReceiveData(SPI2);
-		ptrFunStore2(tmp);
+		volatile int tmp = SPI_I2S_ReceiveData(SPI2);
+		pStoreByte(tmp);
+		SPI_I2S_ClearFlag(SPI2,SPI_I2S_FLAG_RXNE);
 	}
 }
 
-}
+
 

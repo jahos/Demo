@@ -12,17 +12,33 @@
 
 class SPI2_class : public Spi
 {
-private:
-
-		/*Instance to SPI object*/
-	static SPI2_class * spiInstance;
-	bool busy;
-public:
+protected:
 	SPI2_class();
-	static SPI2_class & getInstance();
-	void printAll();
+		/*Instance to SPI object*/
+	BufferQueue* m_outBuffer;
+	BufferQueue* m_inBuffer;
+	volatile CSsetS m_csSet;
+public:
+
+	void setBuffers(BufferQueue* inBuf,BufferQueue* outBuf);
+
+	void setCS(CSsetS settings);
+
+	void disableCS();
+
+	bool isBusy();
+
+	int getByte(); 				//pobiera z outBuf
+
+	void storeByte(int byte); 	//zapisuje w inBuf
+
 	void send();
-	~SPI2_class();
+
+	bool isLastByte();
+
+	static SPI2_class & getInstance();
+
+	virtual ~SPI2_class();
 };
 
 #endif /* CORE_SPI2CLASS_H_ */

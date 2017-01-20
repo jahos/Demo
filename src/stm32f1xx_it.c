@@ -187,8 +187,8 @@ int _write(int fd, char *str, int len)
 
 void SysTick_Handler(void)
 {
-	char c = '#';
-	_write(0,&c,1);
+//	char c = '#';
+//	_write(0,&c,1);
 }
 
 void USART1_IRQHandler()

@@ -72,7 +72,7 @@
 								<option id="com.atollic.truestudio.ld.general.scriptfile.1095634753" name="Linker script" superClass="com.atollic.truestudio.ld.general.scriptfile" value="..\stm32_flash.ld" valueType="string"/>
 								<option id="com.atollic.truestudio.ld.optimization.do_garbage.922254063" name="Dead code removal " superClass="com.atollic.truestudio.ld.optimization.do_garbage" value="true" valueType="boolean"/>
 							</tool>
-							<tool id="com.atollic.truestudio.exe.debug.toolchain.gpp.1915342018" name="C++ Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp">
+							<tool command="arm-atollic-eabi-g++ -c " id="com.atollic.truestudio.exe.debug.toolchain.gpp.1915342018" name="C++ Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp">
 								<option id="com.atollic.truestudio.gpp.symbols.defined.220296341" name="Defined symbols" superClass="com.atollic.truestudio.gpp.symbols.defined" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_MD_VL"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>

@@ -33,8 +33,7 @@ SOFTWARE.
 #include "stm32f10x.h"
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
-#include "Core/SPI1class.h"
-#include "Core/SPI2class.h"
+#include "Sensors/HIH6030.h"
 
 /* Private macro */
 /* Private variables */
@@ -57,23 +56,13 @@ int main(void)
 
 	printf("Witaj !\n\r");
 
-	SPI2_class & sp = SPI2_class::getInstance();
-	SPI1_class& spiInstance = SPI1_class::getInstance();
+	HIH6030 humSens;
 
+	humSens.measureRequest();
+	humSens.getMeasurements();
 
-	for(int i=0; i<100;i++)
-	{
-		if(i%2)
-		{
-			sp.addToQ(i);
-		}
-		else
-		{
-			spiInstance.addToQ(i);
-		}
-	}
-	sp.send();
-	spiInstance.send();
+	printf("temperatura[%d]\n\r",humSens.getTemperature());
+	printf("Wilgotnosc[%d]\n\r",humSens.getHumidity());
 
 	while (1)
 	{
