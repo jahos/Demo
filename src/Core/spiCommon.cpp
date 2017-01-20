@@ -27,7 +27,6 @@ bool setPointers(int (*a_pGetByte)()
 	return retVal;
 }
 
-
 extern "C"
 {
 

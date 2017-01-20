@@ -13,10 +13,12 @@
 class SPI2_class : public Spi
 {
 private:
-	SPI2_class();
+
 		/*Instance to SPI object*/
 	static SPI2_class * spiInstance;
+	bool busy;
 public:
+	SPI2_class();
 	static SPI2_class & getInstance();
 	void printAll();
 	void send();
