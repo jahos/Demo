@@ -27,38 +27,43 @@ bool setPointers(int (*a_pGetByte)()
 	return retVal;
 }
 
+<<<<<<< HEAD
 extern "C"
 {
 
 void SPI1_IRQHandler()
 {
 	if((pEnableCS != 0) && (pGetByte != 0) && (pStoreByte != 0))
+=======
+extern "C" 	void SPI1_IRQHandler()
+>>>>>>> sketch of classes
 	{
-		pEnableCS();
-
-		if(SPI_I2S_GetITStatus(SPI1,SPI_I2S_IT_TXE) != RESET)
+		if((pEnableCS != 0) && (pGetByte != 0) && (pStoreByte != 0))
 		{
-			int c = pGetByte();
-			if(c <= 0xFF)
+			pEnableCS();
+
+			if(SPI_I2S_GetITStatus(SPI1,SPI_I2S_IT_TXE) != RESET)
 			{
-				SPI_I2S_SendData(SPI1,(uint8_t)c);
+				int c = pGetByte();
+				if(c <= 0xFF)
+				{
+					SPI_I2S_SendData(SPI1,(uint8_t)c);
+				}
+				else
+				{
+					SPI_I2S_ITConfig(SPI1, SPI_I2S_IT_TXE, DISABLE);
+				}
 			}
-			else
+
+			if (SPI_I2S_GetITStatus(SPI1, SPI_I2S_IT_RXNE) != RESET)
 			{
-				SPI_I2S_ITConfig(SPI1, SPI_I2S_IT_TXE, DISABLE);
+				int tmp = SPI_I2S_ReceiveData(SPI1);
+				pStoreByte(tmp);
 			}
 		}
-
-		if (SPI_I2S_GetITStatus(SPI1, SPI_I2S_IT_RXNE) != RESET)
+		else
 		{
-			int tmp = SPI_I2S_ReceiveData(SPI1);
-			pStoreByte(tmp);
+			printf("NULL pointers SPI1_IRQHandler\n\r");
 		}
 	}
-	else
-	{
-		printf("NULL pointers SPI1_IRQHandler\n\r");
-	}
-}
 
-}
