@@ -6,11 +6,16 @@
  */
 
 #include <Core/SPI1class.h>
+#include "spiCommon.h"
 
 SPI1_class* SPI1_class::spiInstance = 0;
 
-static int (*ptrFunGet)() = 0;
-static void (*ptrFunStore)(int byte) = 0;
+
+
+static void  enableCS()
+{
+	GPIO_SetBits(GPIOB,GPIO_Pin_4);
+}
 
 static int getByte()
 {
@@ -39,8 +44,8 @@ SPI1_class::SPI1_class()
 	pin_CS = GPIO_Pin_4;
 	pin_D_C = GPIO_Pin_6;
 
-	ptrFunGet = getByte;
-	ptrFunStore = storeByte;
+	setPointers(getByte,storeByte,enableCS);
+
 }
 
 SPI1_class::~SPI1_class()
@@ -53,32 +58,4 @@ void SPI1_class::send()
 	SPI_I2S_ITConfig(SPI1,SPI_I2S_IT_TXE,ENABLE);
 }
 
-extern "C"
-{
 
-void SPI1_IRQHandler()
-{
-	GPIO_SetBits(GPIOA,GPIO_Pin_4);
-
-	if(SPI_I2S_GetITStatus(SPI1,SPI_I2S_IT_TXE) != RESET)
-	{
-		int c = ptrFunGet();
-		if(c <= 0xFF)
-		{
-			SPI_I2S_SendData(SPI1,(uint8_t)c);
-		}
-		else
-		{
-			 SPI_I2S_ITConfig(SPI1, SPI_I2S_IT_TXE, DISABLE);
-		}
-
-	}
-
-	if (SPI_I2S_GetITStatus(SPI1, SPI_I2S_IT_RXNE) != RESET)
-	{
-		int tmp = SPI_I2S_ReceiveData(SPI1);
-		ptrFunStore(tmp);
-	}
-}
-
-}
