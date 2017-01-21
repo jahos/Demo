@@ -34,6 +34,7 @@ SOFTWARE.
 #include "STM32vldiscovery.h"
 #include "userSettings.h"
 #include "Sensors/HIH6030.h"
+#include "Display/Display.h"
 
 /* Private macro */
 /* Private variables */
@@ -48,22 +49,44 @@ SOFTWARE.
 **
 **===========================================================================
 */
+template <typename T>
+T abs(T var)
+{
+	return ((var > 0)? var : (-1 * var));
+}
+
+Display ds;
+
+void pomiar()
+{
+	static HIH6030 humSens;
+	static int i = 0;
+	if(i%2)
+	{
+		humSens.measureRequest();
+	}
+	else
+	{
+		humSens.getMeasurements();
+
+		printf("temperatura[%i.%i *C]\n\r",(humSens.getTemperature()/100),abs(humSens.getTemperature()%100));
+		printf("Wilgotnosc[%i.%i %c]\n\r",(humSens.getHumidity()/100),(humSens.getHumidity()%100),'%');
+		i=0;
+	}
+	++i;
+}
+
+extern void (*wsk2)();
 
 
 int main(void)
 {
+	wsk2 = pomiar;
 	init();
-
 	printf("Witaj !\n\r");
-
-	HIH6030 humSens;
-
-	humSens.measureRequest();
-	humSens.getMeasurements();
-
-	printf("temperatura[%d]\n\r",humSens.getTemperature());
-	printf("Wilgotnosc[%d]\n\r",humSens.getHumidity());
-
+//	ds.setBackground(BLACK);
+//	ds.drawPixel(10,10,RGB_MACRO(255,0,0));
+//	ds.setBackground(BLUE);
 	while (1)
 	{
 

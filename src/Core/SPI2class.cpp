@@ -143,12 +143,11 @@ extern "C" void SPI2_IRQHandler()
 		{
 			 SPI_I2S_ITConfig(SPI2, SPI_I2S_IT_TXE, DISABLE);
 		}
-
 	}
 
 	if (SPI_I2S_GetITStatus(SPI2, SPI_I2S_IT_RXNE) != RESET)
 	{
-		volatile int tmp = SPI_I2S_ReceiveData(SPI2);
+		int tmp = SPI_I2S_ReceiveData(SPI2);
 		pStoreByte(tmp);
 		SPI_I2S_ClearFlag(SPI2,SPI_I2S_FLAG_RXNE);
 	}

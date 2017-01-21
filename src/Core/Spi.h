@@ -44,24 +44,36 @@ struct CSsetS
 class Spi {
 
 public:
-
+	/**
+	 * @brief  check whether SPI is busy
+	 * @param None
+	 * @retval None
+	 */
 	virtual bool isBusy() = 0;
 
+	/**
+	 * @brief  get byte from out buffer
+	 * @param None
+	 * @retval byte to send through SPI
+	 */
 	virtual int getByte() = 0;
 
+	/**
+	 * @brief  store byte to in buffer
+	 * @param byte to store
+	 * @retval None
+	 */
 	virtual void storeByte(int byte) = 0;
 
+	/**
+	 * @brief  enable interrupt for TXE
+	 * @param None
+	 * @retval None
+	 */
 	virtual void send() = 0;
 
 	/*destructor*/
 	virtual ~Spi() {};
 };
-
-/**
- * @brief  GetMessageFrom Queue
- * @param  Message which should be send
- * @retval None
- */
-
 
 #endif /* CORE_SPI_H_ */

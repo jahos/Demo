@@ -14,7 +14,7 @@ void init()
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 	initUsart();
 	initSPI();
-	SysTick_Config(2400000);
+	SysTick_Config(8000000);
 }
 
 void initUsart()
@@ -89,7 +89,7 @@ void initSPI()
 
 	SPI_InitTypeDef spiConfig;
 	SPI_StructInit(&spiConfig);
-	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+	spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
 	spiConfig.SPI_Mode = SPI_Mode_Master;
 	spiConfig.SPI_NSS = SPI_NSS_Soft;
 	spiConfig.SPI_DataSize = SPI_DataSize_8b;

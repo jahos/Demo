@@ -26,12 +26,12 @@ HIH6030::~HIH6030()
 
 int HIH6030::getTemperature()
 {
-	return m_temperature;
+	return (m_temperature * 100);
 }
 
 int HIH6030::getHumidity()
 {
-	return m_humidity;
+	return (m_humidity * 100);
 }
 
 void HIH6030::measureRequest()
@@ -41,8 +41,6 @@ void HIH6030::measureRequest()
 		m_outBuf.push(0xAA);
 		m_sp->send();
 	}
-
-	printf("m_inBuf.front(%d)\n\r",m_inBuf.front());
 	m_inBuf.pop();
 }
 
@@ -50,20 +48,18 @@ void HIH6030::getMeasurements()
 {
 	if(m_sp->isBusy() ==  false)
 	{
-		m_outBuf.push(0x1F);
-		m_outBuf.push(0x12);
-		m_outBuf.push(0x13);
-		m_outBuf.push(0xA3);
+		m_outBuf.push(0xFF);
+		m_outBuf.push(0xFF);
+		m_outBuf.push(0xFF);
+		m_outBuf.push(0xFF);
 		m_sp->send();
 	}
 
 	int tmp = 0;
 	unsigned int pomiar = 0;
-	printf("m_inBuf.size(%d)\n\r",m_inBuf.size());
 	do
 	{
 		tmp = m_inBuf.front();
-		printf("%d\n\r",m_inBuf.front());
 		m_inBuf.pop();
 		pomiar = (pomiar << 8);
 		pomiar |= tmp;

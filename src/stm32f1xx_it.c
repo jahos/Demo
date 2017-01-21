@@ -51,6 +51,8 @@
 static BufferS_t outBuffer;
 static BufferS_t inBuffer;
 
+void (*wsk2)();
+
 /******************************************************************************/
 /*            Cortex-M Processor Exceptions Handlers                          */
 /******************************************************************************/
@@ -187,8 +189,7 @@ int _write(int fd, char *str, int len)
 
 void SysTick_Handler(void)
 {
-//	char c = '#';
-//	_write(0,&c,1);
+	wsk2();
 }
 
 void USART1_IRQHandler()

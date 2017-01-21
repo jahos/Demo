@@ -177,6 +177,10 @@ int ts_formatlength(const char *fmt, va_list va)
 			++fmt;
 			switch (*fmt)
 			{
+			  case 'f':
+				  va_arg(va,double);
+				  ++length;
+				  break;
 			  case 'c':
 		  		  va_arg(va, int);
 				  ++length;
